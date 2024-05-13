@@ -1,0 +1,194 @@
+import { $, driver, expect } from '@wdio/globals'
+
+// describe('FITUR SETTING', function() {
+//     it ('Coba klik menu pada setting', async function() {
+//         const b = await $('~View menu')
+//         await b.waitForExist()
+//         await b.click()
+//         await driver.pause(5000)
+//         // await expect('andin').toBe('andin')
+//         // const bat = await $('//*[@text="Battery"]')
+//         // await bat.click()
+//         // await driver.pause(1000)
+//         // await expect(bat).toHaveText('Battery')
+//     })
+// })
+
+describe('Fitur checkout barang', () => {
+    it('user membuka halaman login', async () => {
+        await $('~View menu').click()
+        await driver.pause(500)
+
+        //scroll ke bawah
+        await driver
+            .action('pointer')
+            .move({y: 850, x: 250})
+            .down()
+            .pause(100)
+            .move({y:500, x:250, duration:200})
+            .up()
+            .perform()
+
+        // await $('android=new UiSelector().text("Log In")').click()
+        await $('//*[@text="Log In"]').click()
+
+        const loginPageTitle = await $('id=com.saucelabs.mydemoapp.android:id/loginTV')
+        await expect(loginPageTitle).toHaveText('Login')
+    })
+
+    it('login dengan menggunakan username dan password valid', async () => {
+        await $('id=com.saucelabs.mydemoapp.android:id/nameET').setValue('bod@example.com')
+        await $('id=com.saucelabs.mydemoapp.android:id/passwordET').setValue('10203040')
+        await $('id=com.saucelabs.mydemoapp.android:id/loginBtn').click()
+
+        const productPageTitle = await $('id=com.saucelabs.mydemoapp.android:id/productTV')
+        await expect(productPageTitle).toHaveText('Products')
+
+    })
+
+    it('user membuka halaman katalog', async () => {
+        await $('~View menu').click()
+        await driver.pause(500)
+
+        // await $('android=new UiSelector().text("Log In")').click()
+        await $('//*[@text="Catalog"]').click()
+
+        const productPageTitle = await $('id=com.saucelabs.mydemoapp.android:id/productTV')
+        await expect(productPageTitle).toHaveText('Products')
+    })
+
+    it('user klik produk', async () => {
+
+        // await $('//*[@text="Sauce Labs Backpack"]').click()
+        await $('~Sauce Labs Backpack').click()
+
+        //scroll ke bawah
+        await driver
+            .action('pointer')
+            .move({y: 829, x: 545})
+            .down()
+            .pause(100)
+            .move({y:317, x:537, duration:200})
+            .up()
+            .perform()
+
+        await $('//android.widget.Button[@content-desc="Tap to add product to cart"]').click()
+
+        const productPageTitle = await $('id=com.saucelabs.mydemoapp.android:id/productTV')
+        const pricePageTitle = await $('id=com.saucelabs.mydemoapp.android:id/priceTV')
+        const noPageTitle = await $('id=com.saucelabs.mydemoapp.android:id/noTV')
+        await expect(productPageTitle).toHaveText('Sauce Labs Backpack')
+        await expect(pricePageTitle).toHaveText('$ 29.99')
+        await expect(noPageTitle).toHaveText('1')
+
+        const cartPageTitle = await $('id=com.saucelabs.mydemoapp.android:id/cartBt')
+        await expect(cartPageTitle).toHaveText('My Cart')
+    })
+
+    it('user klik keranjang', async () => {
+        await $('~View cart').click()
+
+        await $('//*[@text="Proceed To Checkout"]').click()
+
+        const productPageTitle = await $('id=com.saucelabs.mydemoapp.android:id/productTV')
+        // const namePageTitle = await $('com.saucelabs.mydemoapp.android:id/titleTV')
+        const itemsPageTitle = await $('id=com.saucelabs.mydemoapp.android:id/itemsTV')
+        const pricePageTitle = await $('id=com.saucelabs.mydemoapp.android:id/totalPriceTV')
+        const btnCartPageTitle = await $('id=com.saucelabs.mydemoapp.android:id/cartBt')
+        await expect(productPageTitle).toHaveText(expect.stringContaining('My Cart'))
+        // await expect(namePageTitle).toHaveText(expect.stringContaining('Sauce Labs Backpack'))
+        await expect(pricePageTitle).toHaveText(expect.stringContaining('$ 29.99'))
+        await expect(itemsPageTitle).toHaveText(expect.stringContaining('1 Items'))
+        await expect(btnCartPageTitle).toHaveText(expect.stringContaining('Login'))
+    })
+
+    it('user login dengan email dan password valid', async () => {
+        await $('id=com.saucelabs.mydemoapp.android:id/nameET').setValue('bod@example.com')
+        await $('id=com.saucelabs.mydemoapp.android:id/passwordET').setValue('10203040')
+        await $('id=com.saucelabs.mydemoapp.android:id/loginBtn').click()
+
+        const loginPageTitle = await $('id=com.saucelabs.mydemoapp.android:id/loginTV')
+        await expect(loginPageTitle).toHaveText('Enter a shipping address')
+    })
+
+    it('user mengisi data diri valid', async () => {
+        
+        //scroll ke bawah
+        await driver
+            .action('pointer')
+            .move({y: 856, x: 343})
+            .down()
+            .pause(100)
+            .move({y:398, x:856, duration:200})
+            .up()
+            .perform()
+
+        await $('id=com.saucelabs.mydemoapp.android:id/fullNameET').setValue('andin')
+        await $('id=com.saucelabs.mydemoapp.android:id/address1ET').setValue('buah batu')
+        await $('id=com.saucelabs.mydemoapp.android:id/cityET').setValue('bandung')
+        await $('id=com.saucelabs.mydemoapp.android:id/stateET').setValue('jawa barat')
+        await $('id=com.saucelabs.mydemoapp.android:id/zipET').setValue('40244')
+        await $('id=com.saucelabs.mydemoapp.android:id/countryET').setValue('indonesia')
+
+        await $('~Saves user info for checkout').click()
+
+        const paymentPageTitle = await $('id=com.saucelabs.mydemoapp.android:id/paymentBtn')
+        await expect(paymentPageTitle).toHaveText('Review Order')
+
+    })
+
+    it('user mengisi data credit card valid', async () => {
+
+        await $('id=com.saucelabs.mydemoapp.android:id/nameET').setValue('andin')
+        await $('id=com.saucelabs.mydemoapp.android:id/cardNumberET').setValue('12345678910')
+        await $('id=com.saucelabs.mydemoapp.android:id/expirationDateET').setValue('03/25')
+        await $('id=com.saucelabs.mydemoapp.android:id/securityCodeET').setValue('123')
+
+        await driver
+            .action('pointer')
+            .move({y: 875, x: 383})
+            .down()
+            .pause(100)
+            .move({y:358, x:380, duration:200})
+            .up()
+            .perform()
+
+        await $('//android.widget.Button[@content-desc="Saves payment info and launches screen to review checkout data"]').click()
+
+        const reviewOrderPageTitle = await $('id=com.saucelabs.mydemoapp.android:id/paymentBtn')
+        await expect(reviewOrderPageTitle).toHaveText('Place Order')
+
+    })
+
+    it('user mereview order item', async () => {
+
+        await driver
+            .action('pointer')
+            .move({y: 891, x: 356})
+            .down()
+            .pause(100)
+            .move({y:288, x:356, duration:200})
+            .up()
+            .perform()
+
+        const addressPageTitle = await $('id=com.saucelabs.mydemoapp.android:id/addressTV')
+        const itemNumberPageTitle = await $('id=com.saucelabs.mydemoapp.android:id/itemNumberTV')
+        const amountPageTitle = await $('id=com.saucelabs.mydemoapp.android:id/totalAmountTV')
+
+        await expect(addressPageTitle).toHaveText('buah batu')
+        await expect(itemNumberPageTitle).toHaveText('1 Items')
+        await expect(amountPageTitle).toHaveText('$ 35.98')
+
+        await $('~Completes the process of checkout').click()
+
+        const paymentBtn = await $('com.saucelabs.mydemoapp.android:id/paymentBtn')
+        await expect(paymentBtn).toHaveText('Checkout Complete')
+        await expect(paymentBtn).toHaveText('Thank you for your order')
+
+        await $('//android.widget.Button[@content-desc="Tap to open catalog"]')
+        
+        const shoppingBtn = await $('com.saucelabs.mydemoapp.android:id/shoopingBt')
+        await expect(shoppingBtn).toHaveText('Products')
+    })
+
+})
